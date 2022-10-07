@@ -35,4 +35,4 @@ jwt:
   refreshTokenExpiredTime: 1209600000   # 2주
 
 url:
-  api-gateway: http://49.50.167.208:80
+  api-gateway: http://49.50.167.208:8000
