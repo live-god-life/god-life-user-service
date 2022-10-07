@@ -1,1 +1,37 @@
+server:
+  port: 0
 
+spring:
+  application:
+    name: user-service
+  datasource:
+    url: jdbc:mysql://49.50.167.208:3306/db_live_god_life?useSSL=false&useUnicode=true&serverTimezone=Asia/Seoul&allowPublicKeyRetrieval=true
+    username: live_god_life
+    password: Onezo12#
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
+    generate-ddl: true
+
+
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://127.0.0.1:8761/eureka
+  instance:
+    instance-id: ${spring.application.name}:${eureka.instance.instance-id:${random.value}
+
+jwt:
+  secretKey: z1gWDQyOzFEV7pv5PIMhauPQen4cbXVBG8sM1SfKT6FrXm8FPnRdLUrRJqMGF4cWPMjna9mOxzAfup9SCX6QZKZikBf4iIYjevI7
+  accessTokenExpiredTime: 3600000       # 1시간
+  refreshTokenExpiredTime: 1209600000   # 2주
+
+url:
+  api-gateway: http://localhost:8000
