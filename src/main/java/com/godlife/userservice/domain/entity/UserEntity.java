@@ -28,7 +28,7 @@ public class UserEntity {
     private Long userId;
 
     /** 회원 로그인 식별 값 */
-    @Column(unique = true)
+    @Column(unique = true, length = 1000)
     private String identifier;
 
     /** 회원 로그인 타입 */
