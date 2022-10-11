@@ -25,7 +25,7 @@ import java.util.Optional;
 public class UserService{
 
     /** Api-Gateway Service URL */
-    @Value("${url.api-gateway}")
+    @Value("${url.apiGateway}")
     private String apiGatewayURL;
 
     /** WebClient 통신 Key (type) */
