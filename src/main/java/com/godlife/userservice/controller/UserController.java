@@ -50,8 +50,8 @@ public class UserController {
      * @return 닉네임 중복체크 결과
      */
     @GetMapping(value = {"/nickname", "/nickname/{nickname}"})
-    public ResponseEntity<ApiResponse> chkNickname(@PathVariable(required = false) String nickname) {
-        return ResponseEntity.ok(userService.chkNickName(nickname));
+    public ResponseEntity<ApiResponse> checkNickname(@PathVariable(required = false) String nickname) {
+        return ResponseEntity.ok(userService.checkNickname(nickname));
     }
 
     /**

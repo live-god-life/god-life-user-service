@@ -57,7 +57,7 @@ public class UserService{
      * @param nickname  닉네임
      * @return 닉네임 중복 체크 결과
      */
-    public ApiResponse chkNickName(String nickname) {
+    public ApiResponse checkNickname(String nickname) {
         // 닉네임이 누락된 경우 예외 처리
         if(!StringUtils.hasText(nickname)) {
             throw new UserException(ResponseCode.INVALID_PARAMETER);
@@ -89,9 +89,6 @@ public class UserService{
         if(requestMap.values().stream().anyMatch(value -> !StringUtils.hasText(value))) {
             throw new UserException(ResponseCode.INVALID_PARAMETER);
         }
-
-        // 닉네임 중복 체크
-        chkNickName(requestData.getNickname());
 
         // 회원 정보 세팅
         UserEntity user = UserEntity.builder()
