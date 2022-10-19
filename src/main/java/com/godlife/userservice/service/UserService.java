@@ -80,13 +80,17 @@ public class UserService{
      * @param requestData   회원가입 시 필요한 데이터
      * @return 회원가입 성공 및 로그인 처리 후 access token 반환
      */
+    @Transactional
     public String join(RequestJoin requestData) {
+
+        // 타입명 리스트
+        final List<String> TYPE = List.of("apple", "kakao");
 
         // 파라미터 체크를 위한 HashMap 변환
         Map<String, String> requestMap = objectMapper.convertValue(requestData, HashMap.class);
 
         // 파라미터 null, 빈 값 체크
-        if(requestMap.values().stream().anyMatch(value -> !StringUtils.hasText(value))) {
+        if(requestMap.values().stream().anyMatch(value -> !StringUtils.hasText(value)) || !TYPE.contains(requestData.getType())) {
             throw new UserException(ResponseCode.INVALID_PARAMETER);
         }
 
