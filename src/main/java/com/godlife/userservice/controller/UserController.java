@@ -73,7 +73,7 @@ public class UserController {
      * @param userDto   수정 할 사용자 정보
      * @return 회원 수정 결과
      */
-    @PutMapping("/users")
+    @PatchMapping("/users")
     public ResponseEntity<ApiResponse> saveUserInfo(@RequestBody UserDto userDto) {
         userService.saveUserInfo(userDto);
         return ResponseEntity.ok(new ApiResponse(ResponseCode.REFRESH_TOKEN_SAVE_OK, null));
