@@ -11,12 +11,12 @@ import com.godlife.userservice.response.ResponseCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -28,11 +28,8 @@ public class UserService{
     @Value("${url.apiGateway}")
     private String apiGatewayURL;
 
-    /** WebClient 통신 Key (type) */
-    private static final String TYPE_KEY = "type";
-
-    /** WebClient 통신 Key (identifier) */
-    private static final String IDENTIFIER_KEY = "identifier";
+    /** WebClient 통신 Key (name) */
+    private static final String NAME = "name";
 
     /** 회원 repository */
     private final UserRepository userRepository;
@@ -41,15 +38,24 @@ public class UserService{
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     /**
-     * 로그인을 위한 회원 여부 정보 조회
-     * @param type          로그인 타입 (apple / kakao)
-     * @param identifier    식별 값
+     * 회원 조회
+     * @param userDto   회원 조회 조건
      * @return 회원 정보
      */
-    public UserDto getUserForLogin(String type, String identifier) {
-        return Optional.ofNullable(userRepository.findByTypeAndIdentifier(type, identifier))
-                       .map(user -> objectMapper.convertValue(user, UserDto.class))
-                       .orElse(null);
+    public UserDto getUser(UserDto userDto) {
+        if(StringUtils.hasText(userDto.getType()) && StringUtils.hasText(userDto.getIdentifier())) {
+            return Optional.ofNullable(userRepository.findByTypeAndIdentifier(userDto.getType(), userDto.getIdentifier()))
+                           .map(user -> objectMapper.convertValue(user, UserDto.class))
+                           .orElse(null);
+        }
+
+        if(StringUtils.hasText(userDto.getNickname())) {
+            return Optional.ofNullable(userRepository.findByNickname(userDto.getNickname()))
+                           .map(user -> objectMapper.convertValue(user, UserDto.class))
+                           .orElse(null);
+        }
+
+        return null;
     }
 
     /**
