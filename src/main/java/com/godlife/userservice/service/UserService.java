@@ -105,20 +105,15 @@ public class UserService{
         // auth-service 호출 (로그인 처리) -> access token 반환
         WebClient webClient = WebClient.create(apiGatewayURL);
 
-        MultiValueMap<String, String> bodyData = new LinkedMultiValueMap<>();
-
-        bodyData.add(TYPE_KEY, requestData.getType());
-        bodyData.add(IDENTIFIER_KEY, requestData.getIdentifier());
-
-        Map<String, String> responseData = objectMapper.convertValue(webClient.post()
-                                                                              .uri("/login")
-                                                                              .bodyValue(bodyData)
-                                                                              .retrieve()
-                                                                              .bodyToMono(ApiResponse.class)
-                                                                              .block()
-                                                                              .getData(), HashMap.class);
-
-        return responseData.get("authorization");
+        return String.valueOf(webClient.get()
+                             .uri(uriBuilder -> uriBuilder
+                                     .path("/tokens")
+                                     .queryParam(NAME, user.getNickname())
+                                     .build())
+                             .retrieve()
+                             .bodyToMono(ApiResponse.class)
+                             .block()
+                             .getData());
     }
 
     /**
