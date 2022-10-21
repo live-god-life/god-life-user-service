@@ -1,9 +1,7 @@
 package com.godlife.userservice.domain.entity;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.Getter;
 import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.Column;
@@ -13,14 +11,11 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-@Data
 @Entity
+@Getter
 @DynamicUpdate
 @Table(name = "USERS")
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
-public class UserEntity {
+public class UserEntity extends BaseEntity {
 
     /** 회원 번호 */
     @Id
@@ -36,7 +31,7 @@ public class UserEntity {
     private String type;
 
     /** 회원 닉네임 */
-    @Column
+    @Column(unique = true)
     private String nickname;
 
     /** 회원 이메일 */
@@ -46,4 +41,16 @@ public class UserEntity {
     /** 회원 refresh token */
     @Column
     private String refreshToken;
+
+    protected UserEntity() {}
+
+    @Builder
+    public UserEntity(Long userId, String identifier, String type, String nickname, String email, String refreshToken) {
+        this.userId = userId;
+        this.identifier = identifier;
+        this.type = type;
+        this.nickname = nickname;
+        this.email = email;
+        this.refreshToken = refreshToken;
+    }
 }
