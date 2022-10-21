@@ -11,12 +11,12 @@ import com.godlife.userservice.response.ResponseCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -28,11 +28,8 @@ public class UserService{
     @Value("${url.apiGateway}")
     private String apiGatewayURL;
 
-    /** WebClient 통신 Key (type) */
-    private static final String TYPE_KEY = "type";
-
-    /** WebClient 통신 Key (identifier) */
-    private static final String IDENTIFIER_KEY = "identifier";
+    /** WebClient 통신 Key (name) */
+    private static final String NAME = "name";
 
     /** 회원 repository */
     private final UserRepository userRepository;
@@ -41,15 +38,24 @@ public class UserService{
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     /**
-     * 로그인을 위한 회원 여부 정보 조회
-     * @param type          로그인 타입 (apple / kakao)
-     * @param identifier    식별 값
+     * 회원 조회
+     * @param userDto   회원 조회 조건
      * @return 회원 정보
      */
-    public UserDto getUserForLogin(String type, String identifier) {
-        return Optional.ofNullable(userRepository.findByTypeAndIdentifier(type, identifier))
-                       .map(user -> objectMapper.convertValue(user, UserDto.class))
-                       .orElse(null);
+    public UserDto getUser(UserDto userDto) {
+        if(StringUtils.hasText(userDto.getType()) && StringUtils.hasText(userDto.getIdentifier())) {
+            return Optional.ofNullable(userRepository.findByTypeAndIdentifier(userDto.getType(), userDto.getIdentifier()))
+                           .map(user -> objectMapper.convertValue(user, UserDto.class))
+                           .orElse(null);
+        }
+
+        if(StringUtils.hasText(userDto.getNickname())) {
+            return Optional.ofNullable(userRepository.findByNickname(userDto.getNickname()))
+                           .map(user -> objectMapper.convertValue(user, UserDto.class))
+                           .orElse(null);
+        }
+
+        return null;
     }
 
     /**
@@ -57,7 +63,7 @@ public class UserService{
      * @param nickname  닉네임
      * @return 닉네임 중복 체크 결과
      */
-    public ApiResponse chkNickName(String nickname) {
+    public ApiResponse checkNickname(String nickname) {
         // 닉네임이 누락된 경우 예외 처리
         if(!StringUtils.hasText(nickname)) {
             throw new UserException(ResponseCode.INVALID_PARAMETER);
@@ -80,18 +86,19 @@ public class UserService{
      * @param requestData   회원가입 시 필요한 데이터
      * @return 회원가입 성공 및 로그인 처리 후 access token 반환
      */
+    @Transactional
     public String join(RequestJoin requestData) {
+
+        // 타입명 리스트
+        final List<String> TYPE = List.of("apple", "kakao");
 
         // 파라미터 체크를 위한 HashMap 변환
         Map<String, String> requestMap = objectMapper.convertValue(requestData, HashMap.class);
 
         // 파라미터 null, 빈 값 체크
-        if(requestMap.values().stream().anyMatch(value -> !StringUtils.hasText(value))) {
+        if(requestMap.values().stream().anyMatch(value -> !StringUtils.hasText(value)) || !TYPE.contains(requestData.getType())) {
             throw new UserException(ResponseCode.INVALID_PARAMETER);
         }
-
-        // 닉네임 중복 체크
-        chkNickName(requestData.getNickname());
 
         // 회원 정보 세팅
         UserEntity user = UserEntity.builder()
@@ -108,20 +115,15 @@ public class UserService{
         // auth-service 호출 (로그인 처리) -> access token 반환
         WebClient webClient = WebClient.create(apiGatewayURL);
 
-        MultiValueMap<String, String> bodyData = new LinkedMultiValueMap<>();
-
-        bodyData.add(TYPE_KEY, requestData.getType());
-        bodyData.add(IDENTIFIER_KEY, requestData.getIdentifier());
-
-        Map<String, String> responseData = objectMapper.convertValue(webClient.post()
-                                                                              .uri("/login")
-                                                                              .bodyValue(bodyData)
-                                                                              .retrieve()
-                                                                              .bodyToMono(ApiResponse.class)
-                                                                              .block()
-                                                                              .getData(), HashMap.class);
-
-        return responseData.get("authorization");
+        return String.valueOf(webClient.get()
+                             .uri(uriBuilder -> uriBuilder
+                                     .path("/tokens")
+                                     .queryParam(NAME, user.getNickname())
+                                     .build())
+                             .retrieve()
+                             .bodyToMono(ApiResponse.class)
+                             .block()
+                             .getData());
     }
 
     /**

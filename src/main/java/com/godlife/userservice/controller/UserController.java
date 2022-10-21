@@ -8,14 +8,13 @@ import com.godlife.userservice.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -34,24 +33,23 @@ public class UserController {
     private final UserService userService;
 
     /**
-     * 로그인 용 사용자 조회 (토큰 검사 x)
-     * @param type          로그인 타입
-     * @param identifier    로그인 식별 값
-     * @return 사용자 정보
-     */
-    @GetMapping("/user")
-    public ResponseEntity<UserDto> getUser(String type, String identifier) {
-        return ResponseEntity.ok(userService.getUserForLogin(type, identifier));
-    }
-
-    /**
      * 닉네임 중복 체크
      * @param nickname  닉네임
      * @return 닉네임 중복체크 결과
      */
     @GetMapping(value = {"/nickname", "/nickname/{nickname}"})
-    public ResponseEntity<ApiResponse> chkNickname(@PathVariable(required = false) String nickname) {
-        return ResponseEntity.ok(userService.chkNickName(nickname));
+    public ResponseEntity<ApiResponse> checkNickname(@PathVariable(required = false) String nickname) {
+        return ResponseEntity.ok(userService.checkNickname(nickname));
+    }
+
+    /**
+     * 회원 조회
+     * @param userDto     회원 조회 조건
+     * @return 회원 정보
+     */
+    @GetMapping("/users")
+    public ResponseEntity<UserDto> getUser(UserDto userDto) {
+        return ResponseEntity.ok(userService.getUser(userDto));
     }
 
     /**
@@ -75,7 +73,7 @@ public class UserController {
      * @param userDto   수정 할 사용자 정보
      * @return 회원 수정 결과
      */
-    @PutMapping("/users")
+    @PatchMapping("/users")
     public ResponseEntity<ApiResponse> saveUserInfo(@RequestBody UserDto userDto) {
         userService.saveUserInfo(userDto);
         return ResponseEntity.ok(new ApiResponse(ResponseCode.REFRESH_TOKEN_SAVE_OK, null));
