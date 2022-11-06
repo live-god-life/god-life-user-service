@@ -24,12 +24,8 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class UserService{
 
-    /** Api-Gateway Service URL */
-    @Value("${url.apiGateway}")
-    private String apiGatewayURL;
-
-    /** WebClient 통신 Key (name) */
-    private static final String NAME = "name";
+    /** WebClient 통신 Key (userId) */
+    private static final String USER_ID = "userId";
 
     /** 회원 repository */
     private final UserRepository userRepository;
@@ -37,8 +33,11 @@ public class UserService{
     /** ObjectMapper */
     private final ObjectMapper objectMapper = new ObjectMapper();
 
+    /** Eureka LoadBalancer */
+    private final LoadBalancerClient loadBalancerClient;
+
     /**
-     * 회원 조회
+     * 회원 조회 (서비스 용)
      * @param userDto   회원 조회 조건
      * @return 회원 정보
      */
@@ -109,11 +108,11 @@ public class UserService{
                                     .refreshToken(null)
                                     .build();
 
-        // 회원가입
-        userRepository.save(user);
+        // 회원가입 후 아이디 반환
+        Long userId = userRepository.save(user).getUserId();
 
         // auth-service 호출 (로그인 처리) -> access token 반환
-        WebClient webClient = WebClient.create(apiGatewayURL);
+        WebClient webClient = WebClient.create(loadBalancerClient.choose("AUTH-SERVICE").getUri().toString());
 
         return String.valueOf(webClient.get()
                              .uri(uriBuilder -> uriBuilder
