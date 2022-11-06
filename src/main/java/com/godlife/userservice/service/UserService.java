@@ -1,6 +1,7 @@
 package com.godlife.userservice.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.godlife.userservice.domain.dto.ProfileDto;
 import com.godlife.userservice.domain.dto.UserDto;
 import com.godlife.userservice.domain.entity.UserEntity;
 import com.godlife.userservice.domain.request.RequestJoin;
@@ -9,7 +10,8 @@ import com.godlife.userservice.repository.UserRepository;
 import com.godlife.userservice.response.ApiResponse;
 import com.godlife.userservice.response.ResponseCode;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
+import org.apache.commons.lang.math.NumberUtils;
+import org.springframework.cloud.client.loadbalancer.LoadBalancerClient;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -42,12 +44,15 @@ public class UserService{
      * @return 회원 정보
      */
     public UserDto getUser(UserDto userDto) {
+
+        // 로그인용 회원 조회
         if(StringUtils.hasText(userDto.getType()) && StringUtils.hasText(userDto.getIdentifier())) {
             return Optional.ofNullable(userRepository.findByTypeAndIdentifier(userDto.getType(), userDto.getIdentifier()))
                            .map(user -> objectMapper.convertValue(user, UserDto.class))
                            .orElse(null);
         }
 
+        // 닉네임으로 회원 조회
         if(StringUtils.hasText(userDto.getNickname())) {
             return Optional.ofNullable(userRepository.findByNickname(userDto.getNickname()))
                            .map(user -> objectMapper.convertValue(user, UserDto.class))
@@ -55,6 +60,33 @@ public class UserService{
         }
 
         return null;
+    }
+
+    /**
+     * 회원 조회 (Front 용)
+     * @param userId    회원 아이디
+     * @return 회원 정보
+     */
+    public ProfileDto getUser(String userId) {
+
+        // 회원 아이디가 유효하지 않는 경우
+        if(!(StringUtils.hasText(userId) && NumberUtils.isNumber(userId)))
+            throw new UserException(ResponseCode.INVALID_PARAMETER);
+
+        UserDto userInfo = Optional.ofNullable(userRepository.findByUserId(Long.parseLong(userId)))
+                                   .map(user -> objectMapper.convertValue(user, UserDto.class))
+                                   .orElse(null);
+
+        // 회원 정보가 없는 경우
+        if(userInfo == null)
+            throw new UserException(ResponseCode.NOT_FOUND_USER);
+
+        ProfileDto profile = ProfileDto.builder()
+                                       .nickname(userInfo.getNickname())
+                                       .image(userInfo.getImage())
+                                       .build();
+
+        return profile;
     }
 
     /**
