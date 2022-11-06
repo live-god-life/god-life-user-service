@@ -7,11 +7,13 @@ import com.godlife.userservice.response.ResponseCode;
 import com.godlife.userservice.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -38,7 +40,7 @@ public class UserController {
      * @return 닉네임 중복체크 결과
      */
     @GetMapping(value = {"/nickname", "/nickname/{nickname}"})
-    public ResponseEntity<ApiResponse> checkNickname(@PathVariable(required = false) String nickname) {
+    public ResponseEntity<ApiResponse<?>> checkNickname(@PathVariable(required = false) String nickname) {
         return ResponseEntity.ok(userService.checkNickname(nickname));
     }
 
@@ -48,8 +50,14 @@ public class UserController {
      * @return 회원 정보
      */
     @GetMapping("/users")
-    public ResponseEntity<UserDto> getUser(UserDto userDto) {
-        return ResponseEntity.ok(userService.getUser(userDto));
+    public ResponseEntity<ApiResponse<?>> getUser(@RequestHeader(name = "x-user", required = false) String userId, UserDto userDto) {
+        // 마이페이지 용
+        if(StringUtils.hasText(userId)) {
+            return ResponseEntity.ok(new ApiResponse<>(ResponseCode.PROFILE_OK, userService.getUser(userId)));
+        }
+
+        // 로그인 회원 조회용
+        return ResponseEntity.ok(new ApiResponse<>(ResponseCode.PROFILE_OK, userService.getUser(userDto)));
     }
 
     /**
@@ -58,14 +66,14 @@ public class UserController {
      * @return
      */
     @PostMapping("/users")
-    public ResponseEntity<ApiResponse> createUser(RequestJoin requestData) {
+    public ResponseEntity<ApiResponse<?>> createUser(RequestJoin requestData) {
         // bodyData 생성
         Map<String, String> bodyData = new HashMap<>(){{
             put(TOKEN_TYPE_KEY, "Bearer");
             put(AUTHORIZATION_KEY, userService.join(requestData));
         }};
 
-        return ResponseEntity.ok(new ApiResponse(ResponseCode.JOIN_OK, bodyData));
+        return ResponseEntity.ok(new ApiResponse<>(ResponseCode.JOIN_OK, bodyData));
     }
 
     /**
@@ -74,8 +82,8 @@ public class UserController {
      * @return 회원 수정 결과
      */
     @PatchMapping("/users")
-    public ResponseEntity<ApiResponse> saveUserInfo(@RequestBody UserDto userDto) {
+    public ResponseEntity<ApiResponse<?>> saveUserInfo(@RequestBody UserDto userDto) {
         userService.saveUserInfo(userDto);
-        return ResponseEntity.ok(new ApiResponse(ResponseCode.REFRESH_TOKEN_SAVE_OK, null));
+        return ResponseEntity.ok(new ApiResponse<>(ResponseCode.REFRESH_TOKEN_SAVE_OK, null));
     }
 }

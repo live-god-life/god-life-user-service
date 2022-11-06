@@ -1,6 +1,8 @@
 package com.godlife.userservice.domain.dto;
 
+import lombok.Builder;
 import lombok.Data;
+import lombok.Getter;
 
 @Data
 public class UserDto {
@@ -21,4 +23,7 @@ public class UserDto {
 
     /** 회원 이메일 */
     private String email;
+
+    /** 회원 이미지 */
+    private String image;
 }

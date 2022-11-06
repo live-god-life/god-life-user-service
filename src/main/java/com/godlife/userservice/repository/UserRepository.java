@@ -12,4 +12,7 @@ public interface UserRepository extends CrudRepository<UserEntity, Long> {
 
     /** 닉네임으로 회원 조회 */
     UserEntity findByNickname(String nickname);
+
+    /** 회원 아이디로 회원 조회 */
+    UserEntity findByUserId(Long userId);
 }
