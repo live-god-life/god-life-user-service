@@ -2,6 +2,7 @@ package com.godlife.userservice.domain.entity;
 
 import lombok.Builder;
 import lombok.Getter;
+import org.hibernate.annotations.Comment;
 import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.Column;
@@ -17,40 +18,45 @@ import javax.persistence.Table;
 @Table(name = "USERS")
 public class UserEntity extends BaseEntity {
 
-    /** 회원 번호 */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Comment("회원 번호")
     private Long userId;
 
-    /** 회원 로그인 식별 값 */
     @Column(unique = true, length = 1000)
+    @Comment("회원 로그인 식별 값")
     private String identifier;
 
-    /** 회원 로그인 타입 */
     @Column
+    @Comment("회원 로그인 타입")
     private String type;
 
-    /** 회원 닉네임 */
     @Column(unique = true)
+    @Comment("회원 닉네임")
     private String nickname;
 
-    /** 회원 이메일 */
     @Column
+    @Comment("회원 이메일")
     private String email;
 
-    /** 회원 refresh token */
     @Column
+    @Comment("회원 refresh token")
     private String refreshToken;
+
+    @Column
+    @Comment("회원 프로필 이미지")
+    private String image;
 
     protected UserEntity() {}
 
     @Builder
-    public UserEntity(Long userId, String identifier, String type, String nickname, String email, String refreshToken) {
+    public UserEntity(Long userId, String identifier, String type, String nickname, String email, String refreshToken, String image) {
         this.userId = userId;
         this.identifier = identifier;
         this.type = type;
         this.nickname = nickname;
         this.email = email;
         this.refreshToken = refreshToken;
+        this.image = image;
     }
 }
