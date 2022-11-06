@@ -118,7 +118,7 @@ public class UserService{
         return String.valueOf(webClient.get()
                              .uri(uriBuilder -> uriBuilder
                                      .path("/tokens")
-                                     .queryParam(NAME, user.getNickname())
+                                     .queryParam(USER_ID, String.valueOf(userId))
                                      .build())
                              .retrieve()
                              .bodyToMono(ApiResponse.class)
