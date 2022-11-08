@@ -51,7 +51,13 @@ public class UserController {
      * @return 회원 정보
      */
     @GetMapping("/users")
-    public ResponseEntity<ApiResponse<?>> getUser(@RequestHeader(name = "x-user", required = false) String userId, UserDto userDto) {
+    public ResponseEntity<ApiResponse<?>> getUser(@RequestHeader(name = "x-user", required = false) String userId, UserDto userDto, String[] ids) {
+
+        // 여러 회원 조회 용
+        if(ids.length > 0) {
+            return ResponseEntity.ok(new ApiResponse<>(ResponseCode.PROFILE_OK, userService.getUser(ids)));
+        }
+
         // 마이페이지 용
         if(StringUtils.hasText(userId)) {
             return ResponseEntity.ok(new ApiResponse<>(ResponseCode.PROFILE_OK, userService.getUser(userId)));

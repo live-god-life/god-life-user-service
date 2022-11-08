@@ -19,10 +19,12 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -44,7 +46,7 @@ public class UserService{
     private final LoadBalancerClient loadBalancerClient;
 
     /**
-     * 회원 조회 (서비스 용)
+     * 회원 조회 (로그인, 닉네임 조회 용)
      * @param userDto   회원 조회 조건
      * @return 회원 정보
      */
@@ -65,6 +67,26 @@ public class UserService{
         }
 
         return null;
+    }
+
+    /**
+     * 회원 조회 (여러 회원 조회 용)
+     * @param ids   회원 아이디 배열
+     * @return 회원 정보
+     */
+    public List<UserDto> getUser(String[] ids) {
+        // String ID 배열 -> Long ID List
+        List<Long> idList = Arrays.stream(ids)
+                                  .map(Long::parseLong)
+                                  .collect(Collectors.toList());
+
+        // 회원 리스트 생성
+        List<UserDto> userList = userRepository.findByUserIdIn(idList)
+                                               .stream()
+                                               .map((user) -> objectMapper.convertValue(user, UserDto.class))
+                                               .collect(Collectors.toList());
+
+        return userList;
     }
 
     /**
