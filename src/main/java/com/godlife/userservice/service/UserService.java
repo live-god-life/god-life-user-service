@@ -34,6 +34,9 @@ public class UserService{
     /** 회원 repository */
     private final UserRepository userRepository;
 
+    /** 북마크 repository */
+    private final BookmarkRepository bookmarkRepository;
+
     /** ObjectMapper */
     private final ObjectMapper objectMapper = new ObjectMapper();
 
