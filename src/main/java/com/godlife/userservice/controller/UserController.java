@@ -68,9 +68,20 @@ public class UserController {
     }
 
     /**
+     * 북마크 조회
+     * @param userId        회원 아이디
+     * @param feedIds       피드 아이디
+     * @return 북마크 정보
+     */
+    @GetMapping("/users/{userId}/bookmarks")
+    public ResponseEntity<ApiResponse<?>> getBookmark(@PathVariable String userId, String[] feedIds) {
+        return ResponseEntity.ok(new ApiResponse<>(ResponseCode.BOOKMARK_OK, userService.getBookmark(userId, feedIds)));
+    }
+
+    /**
      * 회원가입
      * @param requestData   회원가입 데이터
-     * @return
+     * @return 회원가입 결과
      */
     @PostMapping("/users")
     public ResponseEntity<ApiResponse<?>> createUser(@RequestBody RequestJoin requestData) {
