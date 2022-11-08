@@ -8,6 +8,8 @@ public enum ResponseCode {
     JOIN_OK("success", null, "회원가입을 성공했습니다.", HttpStatus.OK),                                  // 회원가입 성공
     REFRESH_TOKEN_SAVE_OK("success", null, "Refresh Token을 저장했습니다.", HttpStatus.OK),             // Refresh Token 저장 성공
     PROFILE_OK("success", null, "프로필 정보를 조회했습니다.", HttpStatus.OK),                             // 프로필 조회 성공
+    BOOKMARK_REGIST_OK("success", null, "북마크 등록을 성공했습니다.", HttpStatus.OK),                     // 북마크 등록 성공
+    BOOKMARK_DELETE_OK("success", null, "북마크 제거를 성공했습니다.", HttpStatus.OK),                     // 북마크 제거 성공
 
     // 실패 코드
     INVALID_PARAMETER("error", 400, "올바른 정보가 아닙니다.", HttpStatus.BAD_REQUEST),                   // 파라미터 오류

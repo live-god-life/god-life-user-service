@@ -21,7 +21,7 @@ public class UserControllerAdvice {
      * @return Exception 반환
      */
     @ExceptionHandler(UserException.class)
-    public ResponseEntity<ApiResponse> userExceptionHandler(UserException e) {
+    public ResponseEntity<ApiResponse<?>> userExceptionHandler(UserException e) {
         // Exception 메시지 (ResponseCode 메시지)
         if(log.isInfoEnabled()) {
             log.info("Exception message: {}", e.getResponseCode().getMessage());
@@ -36,7 +36,7 @@ public class UserControllerAdvice {
      * @return Exception 반환
      */
     @ExceptionHandler(SQLIntegrityConstraintViolationException.class)
-    public ResponseEntity<ApiResponse> uniqueExceptionHandler(SQLIntegrityConstraintViolationException e) {
+    public ResponseEntity<ApiResponse<?>> uniqueExceptionHandler(SQLIntegrityConstraintViolationException e) {
         if(log.isErrorEnabled()) {
             log.error("Occurred SQLIntegrityConstraintViolationException");
         }

@@ -16,7 +16,7 @@ import javax.persistence.Table;
 @Getter
 @DynamicUpdate
 @Table(name = "USERS")
-public class UserEntity extends BaseEntity {
+public class Users extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -47,10 +47,11 @@ public class UserEntity extends BaseEntity {
     @Comment("회원 프로필 이미지")
     private String image;
 
-    protected UserEntity() {}
+
+    protected Users() {}
 
     @Builder
-    public UserEntity(Long userId, String identifier, String type, String nickname, String email, String refreshToken, String image) {
+    public Users(Long userId, String identifier, String type, String nickname, String email, String refreshToken, String image) {
         this.userId = userId;
         this.identifier = identifier;
         this.type = type;

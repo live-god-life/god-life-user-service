@@ -2,6 +2,7 @@ package com.godlife.userservice.controller;
 
 import com.godlife.userservice.domain.dto.UserDto;
 import com.godlife.userservice.domain.request.RequestJoin;
+import com.godlife.userservice.domain.request.RequestSetBookmark;
 import com.godlife.userservice.response.ApiResponse;
 import com.godlife.userservice.response.ResponseCode;
 import com.godlife.userservice.service.UserService;
@@ -85,5 +86,21 @@ public class UserController {
     public ResponseEntity<ApiResponse<?>> saveUserInfo(@RequestBody UserDto userDto) {
         userService.saveUserInfo(userDto);
         return ResponseEntity.ok(new ApiResponse<>(ResponseCode.REFRESH_TOKEN_SAVE_OK, null));
+    }
+
+    /**
+     * 북마크 설정
+     * @param userId            회원 아이디
+     * @param feedId            피드 아이디
+     * @param bookmark          설정할 북마크 정보
+     * @return 북마크 설정 결과
+     */
+    @PatchMapping("/users/feeds/{feedId}/bookmark")
+    public ResponseEntity<ApiResponse<?>> saveBookmark(@RequestHeader("x-user") String userId, @PathVariable String feedId, @RequestBody RequestSetBookmark bookmark) {
+        boolean status = bookmark.isBookmarkStatus();
+        userService.saveBookmark(userId, feedId, status);
+
+        ResponseCode code = status ? ResponseCode.BOOKMARK_REGIST_OK : ResponseCode.BOOKMARK_DELETE_OK;
+        return ResponseEntity.ok(new ApiResponse<>(code, null));
     }
 }

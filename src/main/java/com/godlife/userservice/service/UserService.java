@@ -3,9 +3,11 @@ package com.godlife.userservice.service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.godlife.userservice.domain.dto.ProfileDto;
 import com.godlife.userservice.domain.dto.UserDto;
-import com.godlife.userservice.domain.entity.UserEntity;
+import com.godlife.userservice.domain.entity.Bookmark;
+import com.godlife.userservice.domain.entity.Users;
 import com.godlife.userservice.domain.request.RequestJoin;
 import com.godlife.userservice.exception.UserException;
+import com.godlife.userservice.repository.BookmarkRepository;
 import com.godlife.userservice.repository.UserRepository;
 import com.godlife.userservice.response.ApiResponse;
 import com.godlife.userservice.response.ResponseCode;
@@ -31,6 +33,9 @@ public class UserService{
 
     /** 회원 repository */
     private final UserRepository userRepository;
+
+    /** 북마크 repository */
+    private final BookmarkRepository bookmarkRepository;
 
     /** ObjectMapper */
     private final ObjectMapper objectMapper = new ObjectMapper();
@@ -101,7 +106,7 @@ public class UserService{
         }
 
         // 해당 닉네임을 가진 회원 조회
-        UserEntity user = userRepository.findByNickname(nickname);
+        Users user = userRepository.findByNickname(nickname);
 
         // 해당 닉네임을 가진 회원이 있는 경우 예외 처리
         if(user != null) {
@@ -132,13 +137,13 @@ public class UserService{
         }
 
         // 회원 정보 세팅
-        UserEntity user = UserEntity.builder()
-                                    .nickname(requestData.getNickname())
-                                    .type(requestData.getType())
-                                    .identifier(requestData.getIdentifier())
-                                    .email(requestData.getEmail())
-                                    .refreshToken(null)
-                                    .build();
+        Users user = Users.builder()
+                          .nickname(requestData.getNickname())
+                          .type(requestData.getType())
+                          .identifier(requestData.getIdentifier())
+                          .email(requestData.getEmail())
+                          .refreshToken(null)
+                          .build();
 
         // 회원가입 후 아이디 반환
         Long userId = userRepository.save(user).getUserId();
@@ -167,7 +172,38 @@ public class UserService{
             throw new UserException(ResponseCode.INVALID_PARAMETER);
         }
 
-        UserEntity user = objectMapper.convertValue(userDto, UserEntity.class);
+        Users user = objectMapper.convertValue(userDto, Users.class);
         userRepository.save(user);
+    }
+
+    /**
+     * 북마크 설정
+     * @param uid       회원 아이디
+     * @param fid       피드 아이디
+     * @param status    상태 값
+     */
+    public void saveBookmark(String uid, String fid, boolean status) {
+        Long userId = Long.valueOf(uid);
+        Long feedId = Long.valueOf(fid);
+
+        Users user = userRepository.findByUserId(userId);
+        Bookmark bookmark;
+
+        if(status) {
+            bookmark = Bookmark.builder()
+                               .user(user)
+                               .feedId(feedId)
+                               .build();
+
+            bookmarkRepository.save(bookmark);
+        } else {
+            bookmark = bookmarkRepository.findByUser_UserIdAndFeedId(userId, feedId);
+
+            if(bookmark == null) {
+                throw new UserException(ResponseCode.INVALID_PARAMETER);
+            }
+
+            bookmarkRepository.delete(bookmark);
+        }
     }
 }
