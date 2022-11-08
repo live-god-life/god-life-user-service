@@ -1,12 +1,14 @@
 package com.godlife.userservice.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.godlife.userservice.domain.dto.FeedBookmarkDto;
 import com.godlife.userservice.domain.dto.ProfileDto;
 import com.godlife.userservice.domain.dto.UserDto;
 import com.godlife.userservice.domain.entity.Bookmark;
 import com.godlife.userservice.domain.entity.Users;
 import com.godlife.userservice.domain.request.RequestJoin;
 import com.godlife.userservice.exception.UserException;
+import com.godlife.userservice.repository.BookmarkCustomRepository;
 import com.godlife.userservice.repository.BookmarkRepository;
 import com.godlife.userservice.repository.UserRepository;
 import com.godlife.userservice.response.ApiResponse;
@@ -19,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -114,6 +117,33 @@ public class UserService{
                                        .build();
 
         return profile;
+    }
+
+    /**
+     * 북마크 조회
+     * @param uid       회원 아이디
+     * @param fids      피드 아이디
+     * @return 북마크 정보
+     */
+    public List<FeedBookmarkDto> getBookmark(String uid, String[] fids) {
+        Long userId = Long.parseLong(uid);
+        List<Long> feedIds = Arrays.stream(fids).map(Long::parseLong).collect(Collectors.toList());
+
+        // 회원의 북마크 조회
+        List<Bookmark> bookmarkList = bookmarkRepository.findByUserIdAndFeedId(userId, feedIds);
+
+        // 데이터 가공
+        List<FeedBookmarkDto> feedBookmarkList = new ArrayList<>();
+
+        for(Long fid : feedIds) {
+            FeedBookmarkDto feedBookmark = new FeedBookmarkDto();
+            feedBookmark.setFeedId(fid);
+            feedBookmark.setBookmarkStatus(bookmarkList.stream().anyMatch(bookmark -> bookmark.getFeedId().equals(fid)));
+
+            feedBookmarkList.add(feedBookmark);
+        }
+
+        return feedBookmarkList;
     }
 
     /**
