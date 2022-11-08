@@ -66,7 +66,7 @@ public class UserController {
      * @return
      */
     @PostMapping("/users")
-    public ResponseEntity<ApiResponse<?>> createUser(RequestJoin requestData) {
+    public ResponseEntity<ApiResponse<?>> createUser(@RequestBody RequestJoin requestData) {
         // bodyData 생성
         Map<String, String> bodyData = new HashMap<>(){{
             put(TOKEN_TYPE_KEY, "Bearer");
