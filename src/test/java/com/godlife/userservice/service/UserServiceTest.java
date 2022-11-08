@@ -2,7 +2,7 @@ package com.godlife.userservice.service;
 
 import com.godlife.userservice.domain.dto.ProfileDto;
 import com.godlife.userservice.domain.dto.UserDto;
-import com.godlife.userservice.domain.entity.UserEntity;
+import com.godlife.userservice.domain.entity.Users;
 import com.godlife.userservice.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -23,7 +23,7 @@ public class UserServiceTest {
 
     @BeforeEach
     void insertUser() {
-        UserEntity user = UserEntity.builder()
+        Users user = Users.builder()
                                     .userId(1L)
                                     .nickname("hoon")
                                     .build();
