@@ -2,6 +2,7 @@ package com.godlife.userservice.domain.entity;
 
 import lombok.Builder;
 import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.Comment;
 import org.hibernate.annotations.DynamicUpdate;
 
@@ -59,5 +60,29 @@ public class Users extends BaseEntity {
         this.email = email;
         this.refreshToken = refreshToken;
         this.image = image;
+    }
+
+    /**
+     * 닉네임 변경 메소드
+     * @param nickname
+     */
+    public void changeNickname(String nickname) {
+        this.nickname = nickname;
+    }
+
+    /**
+     * 이미지 변경 메소드
+     * @param image
+     */
+    public void changeImage(String image) {
+        this.image = image;
+    }
+
+    /**
+     * Refresh token 변경 메소드
+     * @param refreshToken
+     */
+    public void changeRefreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
     }
 }

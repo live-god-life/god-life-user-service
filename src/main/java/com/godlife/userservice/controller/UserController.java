@@ -100,9 +100,12 @@ public class UserController {
      * @return 회원 수정 결과
      */
     @PatchMapping("/users")
-    public ResponseEntity<ApiResponse<?>> saveUserInfo(@RequestBody UserDto userDto) {
+    public ResponseEntity<ApiResponse<?>> saveUserInfo(@RequestHeader(value = "x-user", required = false) String userId, @RequestBody UserDto userDto) {
+        if(StringUtils.hasText(userId))
+            userDto.setUserId(Long.valueOf(userId));
+
         userService.saveUserInfo(userDto);
-        return ResponseEntity.ok(new ApiResponse<>(ResponseCode.REFRESH_TOKEN_SAVE_OK, null));
+        return ResponseEntity.ok(new ApiResponse<>(ResponseCode.UPDATE_OK, null));
     }
 
     /**

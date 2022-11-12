@@ -6,7 +6,7 @@ import org.springframework.http.HttpStatus;
 public enum ResponseCode {
     NICKNAME_OK("success", null, "사용할 수 있는 닉네임입니다.", HttpStatus.OK),                           // 닉네임 중복 x
     JOIN_OK("success", null, "회원가입을 성공했습니다.", HttpStatus.OK),                                  // 회원가입 성공
-    REFRESH_TOKEN_SAVE_OK("success", null, "Refresh Token을 저장했습니다.", HttpStatus.OK),             // Refresh Token 저장 성공
+    UPDATE_OK("success", null, "프로필 정보를 수정했습니다.", HttpStatus.OK),                              // 프로필 수정 성공
     PROFILE_OK("success", null, "프로필 정보를 조회했습니다.", HttpStatus.OK),                             // 프로필 조회 성공
     BOOKMARK_REGIST_OK("success", null, "북마크 등록을 성공했습니다.", HttpStatus.OK),                     // 북마크 등록 성공
     BOOKMARK_DELETE_OK("success", null, "북마크 제거를 성공했습니다.", HttpStatus.OK),                     // 북마크 제거 성공
