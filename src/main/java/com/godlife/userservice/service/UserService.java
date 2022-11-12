@@ -8,7 +8,6 @@ import com.godlife.userservice.domain.entity.Bookmark;
 import com.godlife.userservice.domain.entity.Users;
 import com.godlife.userservice.domain.request.RequestJoin;
 import com.godlife.userservice.exception.UserException;
-import com.godlife.userservice.repository.BookmarkCustomRepository;
 import com.godlife.userservice.repository.BookmarkRepository;
 import com.godlife.userservice.repository.UserRepository;
 import com.godlife.userservice.response.ApiResponse;
@@ -218,14 +217,19 @@ public class UserService{
      * 사용자 정보 수정
      * @param userDto   사용자 정보
      */
+    @Transactional
     public void saveUserInfo(UserDto userDto) {
         // 파라미터 오류 시 예외 처리
         if(!StringUtils.hasText(String.valueOf(userDto.getUserId()))) {
             throw new UserException(ResponseCode.INVALID_PARAMETER);
         }
 
-        Users user = objectMapper.convertValue(userDto, Users.class);
-        userRepository.save(user);
+        Users user = userRepository.findByUserId(userDto.getUserId());
+
+        // 데이터 수정
+        if(StringUtils.hasText(userDto.getNickname()))  user.changeNickname(userDto.getNickname());
+        if(StringUtils.hasText(userDto.getImage()))  user.changeImage(userDto.getImage());
+        if(StringUtils.hasText(userDto.getRefreshToken()))  user.changeRefreshToken(userDto.getRefreshToken());
     }
 
     /**
