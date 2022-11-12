@@ -12,12 +12,13 @@ public enum ResponseCode {
     BOOKMARK_DELETE_OK("success", null, "북마크 제거를 성공했습니다.", HttpStatus.OK),                     // 북마크 제거 성공
     BOOKMARK_OK("success", null, "북마크 정보를 조회했습니다.", HttpStatus.OK),                            // 북마크 조회 성공
     BOOKMARK_FEEDS_OK("success", null, "피드를 조회했습니다.", HttpStatus.OK),                           // 찜한 글 조회 성공
+    DELETE_USER_OK("success", null, "회원탈퇴 되었습니다.", HttpStatus.OK),                              // 회원 탈퇴 성공
 
     // 실패 코드
     INVALID_PARAMETER("error", 400, "올바른 정보가 아닙니다.", HttpStatus.BAD_REQUEST),                   // 파라미터 오류
     DUPLICATE_NICKNAME("error", 402, "중복된 닉네임입니다.", HttpStatus.CONFLICT),                       // 닉네임 중복
     DUPLICATE_USER("error", 402, "이미 가입된 회원입니다.", HttpStatus.CONFLICT),                         // 회원 중복
-    NOT_FOUND_USER("error", 401, "프로필 정보 조회를 실패했습니다.", HttpStatus.INTERNAL_SERVER_ERROR);     // 프로필 조회 실패
+    NOT_FOUND_USER("error", 401, "프로필 정보 조회를 실패했습니다.", HttpStatus.NOT_FOUND);                 // 프로필 조회 실패
 
     /** 상태 (success / error) */
     private String status;

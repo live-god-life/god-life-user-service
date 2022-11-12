@@ -292,4 +292,14 @@ public class UserService{
             bookmarkRepository.delete(bookmark);
         }
     }
+
+    /**
+     * 회원 탈퇴
+     * @param userId    회원 아이디
+     */
+    public void deleteUser(Long userId) {
+        Users user = userRepository.findByUserId(userId);
+
+        userRepository.delete(user);
+    }
 }

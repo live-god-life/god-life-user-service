@@ -9,6 +9,7 @@ import com.godlife.userservice.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -132,5 +133,16 @@ public class UserController {
 
         ResponseCode code = status ? ResponseCode.BOOKMARK_REGIST_OK : ResponseCode.BOOKMARK_DELETE_OK;
         return ResponseEntity.ok(new ApiResponse<>(code, null));
+    }
+
+    /**
+     * 회원 탈퇴
+     * @param userId        회원 아이디
+     * @return 회원 탈퇴 결과
+     */
+    @DeleteMapping("/users")
+    public ResponseEntity<ApiResponse<?>> deleteUser(@RequestHeader("x-user") Long userId) {
+        userService.deleteUser(userId);
+        return ResponseEntity.ok(new ApiResponse<>(ResponseCode.DELETE_USER_OK, null));
     }
 }
