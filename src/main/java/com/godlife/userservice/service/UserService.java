@@ -2,7 +2,6 @@ package com.godlife.userservice.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.godlife.userservice.domain.dto.BookmarkDto;
-import com.godlife.userservice.domain.dto.FeedDto;
 import com.godlife.userservice.domain.dto.ProfileDto;
 import com.godlife.userservice.domain.dto.UserDto;
 import com.godlife.userservice.domain.entity.Bookmark;
