@@ -1,7 +1,7 @@
 package com.godlife.userservice.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.godlife.userservice.domain.dto.FeedBookmarkDto;
+import com.godlife.userservice.domain.dto.BookmarkDto;
 import com.godlife.userservice.domain.dto.ProfileDto;
 import com.godlife.userservice.domain.dto.UserDto;
 import com.godlife.userservice.domain.entity.Bookmark;
@@ -124,7 +124,7 @@ public class UserService{
      * @param fids      피드 아이디
      * @return 북마크 정보
      */
-    public List<FeedBookmarkDto> getBookmark(String uid, String[] fids) {
+    public List<BookmarkDto> getBookmark(String uid, String[] fids) {
         Long userId = Long.parseLong(uid);
         List<Long> feedIds = Arrays.stream(fids).map(Long::parseLong).collect(Collectors.toList());
 
@@ -132,10 +132,10 @@ public class UserService{
         List<Bookmark> bookmarkList = bookmarkRepository.findByUserIdAndFeedId(userId, feedIds);
 
         // 데이터 가공
-        List<FeedBookmarkDto> feedBookmarkList = new ArrayList<>();
+        List<BookmarkDto> feedBookmarkList = new ArrayList<>();
 
         for(Long fid : feedIds) {
-            FeedBookmarkDto feedBookmark = new FeedBookmarkDto();
+            BookmarkDto feedBookmark = new BookmarkDto();
             feedBookmark.setFeedId(fid);
             feedBookmark.setBookmarkStatus(bookmarkList.stream().anyMatch(bookmark -> bookmark.getFeedId().equals(fid)));
 
