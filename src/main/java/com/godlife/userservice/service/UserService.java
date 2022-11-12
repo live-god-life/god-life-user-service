@@ -119,6 +119,36 @@ public class UserService{
     }
 
     /**
+     * 찜한 글 조회
+     * @param userId    회원 아이디
+     * @return 찜한 글 리스트
+     */
+    public Object getHeartFeeds(String userId) {
+
+        // 회원의 북마크 정보 조회
+        List<Bookmark> bookmark = bookmarkRepository.findByUser_UserId(Long.valueOf(userId));
+
+        // 회원 아이디 매핑
+        List<Long> bookmarkList = bookmark.stream()
+                                          .map(Bookmark::getFeedId)
+                                          .collect(Collectors.toList());
+
+        // feed-service 호출 -> 피드 리스트 조회
+        WebClient webClient = WebClient.create(loadBalancerClient.choose("FEED-SERVICE").getUri().toString());
+
+        return webClient.get()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/feeds")
+                        .queryParam("ids", bookmarkList)
+                        .build())
+                .header("x-user", userId)
+                .retrieve()
+                .bodyToMono(ApiResponse.class)
+                .block()
+                .getData();
+    }
+
+    /**
      * 북마크 조회
      * @param uid       회원 아이디
      * @param fids      피드 아이디

@@ -11,6 +11,7 @@ public enum ResponseCode {
     BOOKMARK_REGIST_OK("success", null, "북마크 등록을 성공했습니다.", HttpStatus.OK),                     // 북마크 등록 성공
     BOOKMARK_DELETE_OK("success", null, "북마크 제거를 성공했습니다.", HttpStatus.OK),                     // 북마크 제거 성공
     BOOKMARK_OK("success", null, "북마크 정보를 조회했습니다.", HttpStatus.OK),                            // 북마크 조회 성공
+    BOOKMARK_FEEDS_OK("success", null, "피드를 조회했습니다.", HttpStatus.OK),                           // 찜한 글 조회 성공
 
     // 실패 코드
     INVALID_PARAMETER("error", 400, "올바른 정보가 아닙니다.", HttpStatus.BAD_REQUEST),                   // 파라미터 오류
