@@ -68,6 +68,16 @@ public class UserController {
     }
 
     /**
+     * 찜한 글 조회
+     * @param userId    회원 아이디
+     * @return  찜한 글 리스트
+     */
+    @GetMapping("/users/hearts")
+    public ResponseEntity<ApiResponse<?>> getFeeds(@RequestHeader("x-user") String userId) {
+        return ResponseEntity.ok(new ApiResponse<>(ResponseCode.BOOKMARK_FEEDS_OK, userService.getHeartFeeds(userId)));
+    }
+
+    /**
      * 북마크 조회
      * @param userId        회원 아이디
      * @param feedIds       피드 아이디

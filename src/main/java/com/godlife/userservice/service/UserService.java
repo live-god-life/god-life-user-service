@@ -2,6 +2,7 @@ package com.godlife.userservice.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.godlife.userservice.domain.dto.BookmarkDto;
+import com.godlife.userservice.domain.dto.FeedDto;
 import com.godlife.userservice.domain.dto.ProfileDto;
 import com.godlife.userservice.domain.dto.UserDto;
 import com.godlife.userservice.domain.entity.Bookmark;
@@ -116,6 +117,36 @@ public class UserService{
                                        .build();
 
         return profile;
+    }
+
+    /**
+     * 찜한 글 조회
+     * @param userId    회원 아이디
+     * @return 찜한 글 리스트
+     */
+    public Object getHeartFeeds(String userId) {
+
+        // 회원의 북마크 정보 조회
+        List<Bookmark> bookmark = bookmarkRepository.findByUser_UserId(Long.valueOf(userId));
+
+        // 회원 아이디 매핑
+        List<Long> bookmarkList = bookmark.stream()
+                                          .map(Bookmark::getFeedId)
+                                          .collect(Collectors.toList());
+
+        // feed-service 호출 -> 피드 리스트 조회
+        WebClient webClient = WebClient.create(loadBalancerClient.choose("FEED-SERVICE").getUri().toString());
+
+        return webClient.get()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/feeds")
+                        .queryParam("ids", bookmarkList)
+                        .build())
+                .header("x-user", userId)
+                .retrieve()
+                .bodyToMono(ApiResponse.class)
+                .block()
+                .getData();
     }
 
     /**
