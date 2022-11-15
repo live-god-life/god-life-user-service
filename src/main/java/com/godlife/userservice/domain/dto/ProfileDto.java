@@ -7,9 +7,9 @@ import lombok.Data;
 @Builder
 public class ProfileDto {
 
-    /** 회원 닉네임 */
-    private String nickname;
+	/** 회원 닉네임 */
+	private String nickname;
 
-    /** 회원 이미지 */
-    private String image;
+	/** 회원 이미지 */
+	private String image;
 }
