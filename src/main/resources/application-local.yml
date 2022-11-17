@@ -9,7 +9,7 @@ spring:
       path: /h2-console
 
   datasource:
-    url: jdbc:h2:mem:onezo
+    url: jdbc:h2:tcp://localhost/~/onezo
     username: sa
     password:
     driver-class-name: org.h2.Driver
@@ -32,6 +32,3 @@ eureka:
   instance:
     instance-id: ${spring.application.name}:${eureka.instance.instance-id:${random.value}
     prefer-ip-address: true
-
-url:
-  apiGateway: http://localhost:8000
