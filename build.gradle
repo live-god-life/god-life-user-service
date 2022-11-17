@@ -35,6 +35,8 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-webflux'
     implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'org.springframework.cloud:spring-cloud-starter-config'
     implementation 'io.jsonwebtoken:jjwt:0.9.1'
     implementation 'mysql:mysql-connector-java'
     implementation group: 'javax.xml.bind', name: 'jaxb-api', version: '2.1'
