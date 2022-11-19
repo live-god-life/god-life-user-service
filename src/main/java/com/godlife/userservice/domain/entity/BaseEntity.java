@@ -1,5 +1,6 @@
 package com.godlife.userservice.domain.entity;
 
+import org.hibernate.annotations.Comment;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -14,8 +15,10 @@ import java.time.LocalDateTime;
 public abstract class BaseEntity {
 
 	@CreatedDate
+	@Comment("등록일")
 	private LocalDateTime createdDate;
 
 	@LastModifiedDate
+	@Comment("수정일")
 	private LocalDateTime updatedDate;
 }
