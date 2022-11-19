@@ -20,7 +20,7 @@ public enum ResponseCode {
 	INVALID_PARAMETER("error", 400, "올바른 정보가 아닙니다.", HttpStatus.BAD_REQUEST),                   // 파라미터 오류
 	DUPLICATE_NICKNAME("error", 402, "중복된 닉네임입니다.", HttpStatus.CONFLICT),                       // 닉네임 중복
 	DUPLICATE_USER("error", 402, "이미 가입된 회원입니다.", HttpStatus.CONFLICT),                        // 회원 중복
-	NOT_FOUND_USER("error", 401, "프로필 정보 조회를 실패했습니다.", HttpStatus.OK);                		// 프로필 조회 실패
+	NOT_FOUND_USER("error", 401, "프로필 정보 조회를 실패했습니다.", HttpStatus.NOT_FOUND);                	// 프로필 조회 실패
 
 
 	/** 상태 (success / error) */
