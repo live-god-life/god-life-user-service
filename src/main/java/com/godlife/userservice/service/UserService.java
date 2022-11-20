@@ -281,6 +281,12 @@ public class UserService {
 		Bookmark bookmark;
 
 		if (status) {
+			bookmark = bookmarkRepository.findByUser_UserIdAndFeedId(userId, feedId);
+
+			if(bookmark != null) {
+				throw new UserException(ResponseCode.INVALID_PARAMETER);
+			}
+
 			bookmark = Bookmark.builder()
 				.user(user)
 				.feedId(feedId)
