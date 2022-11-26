@@ -42,6 +42,10 @@ public class Users extends BaseEntity {
 	private String email;
 
 	@Column
+	@Comment("회원 access token")
+	private String accessToken;
+
+	@Column
 	@Comment("회원 refresh token")
 	private String refreshToken;
 
@@ -53,12 +57,13 @@ public class Users extends BaseEntity {
 	}
 
 	@Builder
-	public Users(Long userId, String identifier, String type, String nickname, String email, String refreshToken, String image) {
+	public Users(Long userId, String identifier, String type, String nickname, String email, String accessToken, String refreshToken, String image) {
 		this.userId = userId;
 		this.identifier = identifier;
 		this.type = type;
 		this.nickname = nickname;
 		this.email = email;
+		this.accessToken = accessToken;
 		this.refreshToken = refreshToken;
 		this.image = image;
 	}
@@ -80,10 +85,12 @@ public class Users extends BaseEntity {
 	}
 
 	/**
-	 * Refresh token 변경 메소드
+	 * token 변경 메소드
+	 * @param accessToken
 	 * @param refreshToken
 	 */
-	public void changeRefreshToken(String refreshToken) {
+	public void changeToken(String accessToken, String refreshToken) {
+		this.accessToken = accessToken;
 		this.refreshToken = refreshToken;
 	}
 }

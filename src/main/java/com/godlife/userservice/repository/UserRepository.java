@@ -18,5 +18,9 @@ public interface UserRepository extends CrudRepository<Users, Long> {
 	/** 회원 아이디로 회원 조회 */
 	Users findByUserId(Long userId);
 
+	/** 엑세스 토큰으로 회원 조회 */
+	Users findByAccessToken(String accessToken);
+
+	/** 아이디 리스트로 여러 회원 조회 */
 	List<Users> findByUserIdIn(List<Long> ids);
 }
