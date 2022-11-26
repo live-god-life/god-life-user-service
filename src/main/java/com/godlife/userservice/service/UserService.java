@@ -203,10 +203,9 @@ public class UserService {
 	/**
 	 * 회원가입
 	 * @param requestData   회원가입 시 필요한 데이터
-	 * @return 회원가입 성공 및 로그인 처리 후 access token 반환
 	 */
 	@Transactional
-	public String join(RequestJoin requestData) {
+	public void join(RequestJoin requestData) {
 
 		// 타입명 리스트
 		final List<String> TYPE = List.of("apple", "kakao");
@@ -228,21 +227,29 @@ public class UserService {
 			.refreshToken(null)
 			.build();
 
-		// 회원가입 후 아이디 반환
-		Long userId = userRepository.save(user).getUserId();
+		// 회원가입
+		userRepository.save(user);
+	}
 
-		// auth-service 호출 (로그인 처리) -> access token 반환
+	/**
+	 * 회원가입
+	 * @param requestData   회원가입 시 필요한 데이터
+	 * @return 로그인 처리 후 access token 반환
+	 */
+	public String login(RequestJoin requestData) {
+
+		// auth-service 호출 (로그인 처리)
 		WebClient webClient = WebClient.create(loadBalancerClient.choose("AUTH-SERVICE").getUri().toString());
 
-		return String.valueOf(webClient.get()
-			.uri(uriBuilder -> uriBuilder
-				.path("/tokens")
-				.queryParam(USER_ID, String.valueOf(userId))
-				.build())
+		Map<String, String> response = (Map<String, String>) webClient.post()
+			.uri("/login")
+			.bodyValue(requestData)
 			.retrieve()
 			.bodyToMono(ApiResponse.class)
 			.block()
-			.getData());
+			.getData();
+
+		return response.get("authorization");
 	}
 
 	/**
