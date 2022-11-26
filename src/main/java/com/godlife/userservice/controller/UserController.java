@@ -98,10 +98,14 @@ public class UserController {
 	 */
 	@PostMapping("/users")
 	public ResponseEntity<ApiResponse<?>> createUser(@RequestBody RequestJoin requestData) {
+
+		// 회원 가입
+		userService.join(requestData);
+
 		// bodyData 생성
 		Map<String, String> bodyData = new HashMap<>() {{
 			put(TOKEN_TYPE_KEY, "Bearer");
-			put(AUTHORIZATION_KEY, userService.join(requestData));
+			put(AUTHORIZATION_KEY, userService.login(requestData));
 		}};
 
 		return ResponseEntity.ok(new ApiResponse<>(ResponseCode.JOIN_OK, bodyData));
