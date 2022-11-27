@@ -16,6 +16,9 @@ public class UserDto {
 	/** 회원 로그인 식별 값 */
 	private String identifier;
 
+	/** 회원 access token */
+	private String accessToken;
+
 	/** 회원 refresh token */
 	private String refreshToken;
 
