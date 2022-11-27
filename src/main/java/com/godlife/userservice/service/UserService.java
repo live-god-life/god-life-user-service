@@ -1,5 +1,20 @@
 package com.godlife.userservice.service;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import org.apache.commons.lang.math.NumberUtils;
+import org.springframework.cloud.client.loadbalancer.LoadBalancerClient;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
+import org.springframework.web.reactive.function.client.WebClient;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.godlife.userservice.domain.dto.BookmarkDto;
 import com.godlife.userservice.domain.dto.ProfileDto;
@@ -14,21 +29,6 @@ import com.godlife.userservice.response.ApiResponse;
 import com.godlife.userservice.response.ResponseCode;
 
 import lombok.RequiredArgsConstructor;
-
-import org.apache.commons.lang.math.NumberUtils;
-import org.springframework.cloud.client.loadbalancer.LoadBalancerClient;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
-import org.springframework.web.reactive.function.client.WebClient;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -66,6 +66,13 @@ public class UserService {
 		// 닉네임으로 회원 조회
 		if (StringUtils.hasText(userDto.getNickname())) {
 			return Optional.ofNullable(userRepository.findByNickname(userDto.getNickname()))
+				.map(user -> objectMapper.convertValue(user, UserDto.class))
+				.orElse(null);
+		}
+
+		// 엑세스 토큰으로 회원 조회
+		if(StringUtils.hasText(userDto.getAccessToken())) {
+			return Optional.ofNullable(userRepository.findByAccessToken(userDto.getAccessToken()))
 				.map(user -> objectMapper.convertValue(user, UserDto.class))
 				.orElse(null);
 		}
@@ -224,6 +231,7 @@ public class UserService {
 			.type(requestData.getType())
 			.identifier(requestData.getIdentifier())
 			.email(requestData.getEmail())
+			.accessToken(null)
 			.refreshToken(null)
 			.build();
 
@@ -268,10 +276,12 @@ public class UserService {
 		// 데이터 수정
 		if (StringUtils.hasText(userDto.getNickname()))
 			user.changeNickname(userDto.getNickname());
+
 		if (StringUtils.hasText(userDto.getImage()))
 			user.changeImage(userDto.getImage());
-		if (StringUtils.hasText(userDto.getRefreshToken()))
-			user.changeRefreshToken(userDto.getRefreshToken());
+
+		if (StringUtils.hasText(userDto.getAccessToken()) && StringUtils.hasText(userDto.getRefreshToken()))
+			user.changeToken(userDto.getAccessToken(), userDto.getRefreshToken());
 	}
 
 	/**
