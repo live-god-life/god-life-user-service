@@ -10,7 +10,7 @@ pipeline {
             steps {
                 echo 'Clonning Repository'
                 git url: 'git@github.com:live-god-life/god-life-user-service.git',
-                branch: 'release',
+                branch: 'master',
                 credentialsId: 'jenkins-git'
             }
             post {
