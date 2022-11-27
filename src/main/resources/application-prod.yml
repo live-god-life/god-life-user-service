@@ -1,0 +1,6 @@
+spring:
+  config:
+    import: optional:configserver:http://101.101.208.221:8888
+  cloud:
+    config:
+      name: livegodlife
