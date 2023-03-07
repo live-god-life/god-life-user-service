@@ -233,6 +233,7 @@ public class UserService {
 			.email(requestData.getEmail())
 			.accessToken(null)
 			.refreshToken(null)
+			.marketingYn(requestData.getMarketingYn())
 			.build();
 
 		// 회원가입
@@ -240,7 +241,7 @@ public class UserService {
 	}
 
 	/**
-	 * 회원가입
+	 * 회원가입 후 로그인
 	 * @param requestData   회원가입 시 필요한 데이터
 	 * @return 로그인 처리 후 access token 반환
 	 */
