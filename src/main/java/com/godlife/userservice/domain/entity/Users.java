@@ -53,11 +53,15 @@ public class Users extends BaseEntity {
 	@Comment("회원 프로필 이미지")
 	private String image;
 
+	@Column
+	@Comment("마케팅 수신 동의 여부")
+	private String marketingYn;
+
 	protected Users() {
 	}
 
 	@Builder
-	public Users(Long userId, String identifier, String type, String nickname, String email, String accessToken, String refreshToken, String image) {
+	public Users(Long userId, String identifier, String type, String nickname, String email, String accessToken, String refreshToken, String image, String marketingYn) {
 		this.userId = userId;
 		this.identifier = identifier;
 		this.type = type;
@@ -66,6 +70,7 @@ public class Users extends BaseEntity {
 		this.accessToken = accessToken;
 		this.refreshToken = refreshToken;
 		this.image = image;
+		this.marketingYn = marketingYn;
 	}
 
 	/**
