@@ -27,4 +27,7 @@ public class UserDto {
 
 	/** 회원 이미지 */
 	private String image;
+
+	/** 마케팅 정보 수신 동의 여부 */
+	private String marketingYn;
 }
